@@ -41,6 +41,23 @@ class AuthController {
 
     this.sendAccessTokenAndSetRefreshToken(user, res)
   }
+
+  refresh = async (req, res, next) => {
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      throw Error('Refresh token истёк или отсутстувует в cookies["refreshToken"]')
+    }
+
+    const decodedRefreshToken = authService.verifyRefreshToken(refreshToken)
+    if (!decodedRefreshToken) {
+      throw Error('Невалидный refresh token')
+    }
+
+    const user = await UserRepository.findOne({ username: decodedRefreshToken.username })
+
+    this.sendAccessTokenAndSetRefreshToken(user, res)
+  }
 }
 
 const authController = new AuthController()

@@ -28,6 +28,21 @@ class AuthService {
     return isPasswordCorrect
   }
 
+  verifyRefreshToken = (refreshToken) => {
+    try {
+      return jwt.verify(refreshToken, this.refreshJwtSecret)
+    } catch (e) {
+      return undefined
+    }
+  }
+
+  verifyAccessToken = (accessToken) => {
+    try {
+      return jwt.verify(accessToken, this.accessJwtSecret)
+    } catch (e) {
+      return undefined
+    }
+  }
 }
 
 const authService = new AuthService();
