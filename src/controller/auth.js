@@ -3,13 +3,14 @@ import authService from "../service/auth.js";
 
 class AuthController {
   sendAccessTokenAndSetRefreshToken = async (user, res) => {
-    const { username } = user
+    const { username, role, _id } = user
+    const userForSend = { username, role, _id }
 
-    const { accessToken, refreshToken } = authService.generateTokens({ username })
+    const { accessToken, refreshToken } = authService.generateTokens({ username, role })
     await authService.saveTokenToDB(refreshToken, user)
 
     res.cookie('refreshToken', refreshToken, { httpOnly: true })
-    res.status(200).send({ status: 'success', data: { user: username, accessToken } })
+    res.status(200).send({ status: 'success', data: { user: userForSend, accessToken } })
   }
 
   signup = async (req, res, next) => {
