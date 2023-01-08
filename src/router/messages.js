@@ -1,6 +1,7 @@
 import { Router } from "express";
 import messagesController from "../controller/messages.js";
 import { isLogin } from "../middleware/isLogin.js";
+import { roleCheck } from "../middleware/roleCheck.js";
 
 const router = Router()
 
