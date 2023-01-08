@@ -10,6 +10,10 @@ const conversationSchema = new mongoose.Schema({
     type: mongoose.Types.ObjectId,
     ref: 'User',
     required: true,
+  },
+  lastMessage: {
+    type: mongoose.Types.ObjectId,
+    ref: 'Message',
   }
 })
 
