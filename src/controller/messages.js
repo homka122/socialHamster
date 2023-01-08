@@ -45,11 +45,13 @@ class MessagesController {
       return next(new Error('Пользователя с таким именем нет'))
     }
 
-    const conversation = await ConversationRepository.findOne({ $or: [{ user1: req.user._id, user2: userThatGet._id }, { user1: userThatGet._id, user2: req.user._id }] })
-    if (!conversation) {
-      const newConversation = await ConversationRepository.create({ user1: req.user, user2: userThatGet })
-      const message = await MessageRepository.create({ sender: req.user._id, text, conversation: newConversation })
-      return res.status(201).json({ status: 'success', data: { message: message.text } })
+    let conversation;
+
+    const conversationCandidate = await ConversationRepository.findOne({ $or: [{ user1: req.user._id, user2: userThatGet._id }, { user1: userThatGet._id, user2: req.user._id }] })
+    if (!conversationCandidate) {
+      conversation = await ConversationRepository.create({ user1: req.user, user2: userThatGet })
+    } else {
+      conversation = conversationCandidate
     }
 
     const message = await MessageRepository.create({ sender: req.user._id, text, conversation })
