@@ -1,6 +1,7 @@
 import factoryRoutes from "../utils/factoryRoutes.js"
 import MessageRepository from '../models/message.js'
 import ConversationRepository from "../models/conversation.js"
+import UserRepository from "../models/user.js"
 
 class MessagesController {
   getAll = factoryRoutes.getAll(MessageRepository)
@@ -36,16 +37,21 @@ class MessagesController {
     res.status(200).json({ status: 'success', data: messages })
   }
 
-  sendMessageFromConversation = async (req, res, next) => {
-    const { id } = req.params
+  sendMessageToUser = async (req, res, next) => {
+    const { text, username } = req.body
 
-    const conversation = await ConversationRepository.findById(id)
-
-    if (!this.isUserHaveAccessToConverastion(req.user, conversation)) {
-      return next(new Error('Нет доступа к данной переписке или её не существует'))
+    const userThatGet = await UserRepository.findOne({ username })
+    if (!userThatGet) {
+      return next(new Error('Пользователя с таким именем нет'))
     }
 
-    const { text } = req.body
+    const conversation = await ConversationRepository.findOne({ $or: [{ user1: req.user._id, user2: userThatGet._id }, { user1: userThatGet._id, user2: req.user._id }] })
+    if (!conversation) {
+      const newConversation = await ConversationRepository.create({ user1: req.user, user2: userThatGet })
+      const message = await MessageRepository.create({ sender: req.user._id, text, conversation: newConversation })
+      return res.status(201).json({ status: 'success', data: { message: message.text } })
+    }
+
     const message = await MessageRepository.create({ sender: req.user._id, text, conversation })
     res.status(201).json({ status: 'success', data: { message: message.text } })
   }
