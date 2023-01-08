@@ -6,13 +6,18 @@ import { roleCheck } from "../middleware/roleCheck.js";
 const router = Router()
 
 router.use(isLogin)
+
+router.route('/:id')
+  .get(messagesController.getUserMessagesFromConversation)
+  .post(messagesController.sendMessageFromConversation)
+
 router.use(roleCheck('ADMIN'))
 
-router.route('/')
+router.route('/admin')
   .get(messagesController.getAll)
   .post(messagesController.createOne)
 
-router.route('/:id')
+router.route('/admin/:id')
   .get(messagesController.getOne)
   .patch(messagesController.updateOne)
   .delete(messagesController.deleteOne)

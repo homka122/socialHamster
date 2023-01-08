@@ -10,7 +10,6 @@ const messageSchema = new mongoose.Schema({
   text: String,
   createdAt: {
     type: Date,
-    default: new Date(),
   },
   conversation: {
     type: mongoose.Types.ObjectId,
@@ -20,6 +19,7 @@ const messageSchema = new mongoose.Schema({
 })
 
 messageSchema.pre('save', async function (next) {
+  this.createdAt = Date.now()
   await ConversationRepository.findByIdAndUpdate(this.conversation._id, { lastMessage: this._id })
   next()
 })

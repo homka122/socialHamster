@@ -17,6 +17,7 @@
     "@types/mongoose": "^5.11.97"
   },
   "scripts": {
-    "start": "node -r dotenv/config src/server.js"
+    "start": "node -r dotenv/config src/server.js",
+    "debug": "node --inspect -r dotenv/config src/server.js"
   }
 }
