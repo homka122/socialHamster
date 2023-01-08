@@ -5,9 +5,16 @@ import { roleCheck } from "../middleware/roleCheck.js";
 
 const router = Router()
 
-router.use(isLogin, roleCheck('ADMIN'))
+router.use(isLogin)
+router.use(roleCheck('ADMIN'))
 
-router.route('/').get(usersController.getAll)
-router.route('/:id').get(usersController.getOne)
+router.route('/')
+  .get(usersController.getAll)
+  .post(usersController.createOne)
+
+router.route('/:id')
+  .get(usersController.getOne)
+  .patch(usersController.updateOne)
+  .delete(usersController.deleteOne)
 
 export default router
