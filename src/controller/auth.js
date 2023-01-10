@@ -1,5 +1,7 @@
 import UserRepository from "../models/user.js";
 import authService from "../service/auth.js";
+import { ApiError } from "../utils/ApiError.js";
+import { catchAsync } from "../utils/catchAsync.js";
 
 class AuthController {
   sendAccessTokenAndSetRefreshToken = async (user, res) => {
@@ -18,7 +20,7 @@ class AuthController {
     const user = await UserRepository.findOne({ username })
 
     if (user) {
-      throw Error('Пользователь с таким никнеймом уже существует')
+      return next(new ApiError('Пользователь с таким никнеймом уже существует', 400))
     }
 
     const hashedPassword = await authService.hashPassowrd(password)
@@ -27,32 +29,32 @@ class AuthController {
     this.sendAccessTokenAndSetRefreshToken(newUser, res)
   }
 
-  login = async (req, res, next) => {
+  login = catchAsync(async (req, res, next) => {
     const { username, password } = req.body
     const user = await UserRepository.findOne({ username })
 
     if (!user) {
-      throw Error('Неверный никнейм или пароль!')
+      return next(new ApiError('Неверный никнейм или пароль!', 400))
     }
 
     const isPasswordCorrect = await authService.isPasswordCorrect(password, user.password)
     if (!isPasswordCorrect) {
-      throw Error('Неверный никнейм или пароль!')
+      return next(new ApiError('Неверный никнейм или пароль!', 400))
     }
 
     this.sendAccessTokenAndSetRefreshToken(user, res)
-  }
+  })
 
   refresh = async (req, res, next) => {
     const refreshToken = req.cookies.refreshToken;
 
     if (!refreshToken) {
-      throw Error('Refresh token истёк или отсутстувует в cookies["refreshToken"]')
+      return next(new ApiError('Refresh token истёк или отсутстувует в cookies["refreshToken"]', 403))
     }
 
     const decodedRefreshToken = authService.verifyRefreshToken(refreshToken)
     if (!decodedRefreshToken) {
-      throw Error('Невалидный refresh token')
+      return next(new ApiError('Невалидный refresh token', 403))
     }
 
     const user = await UserRepository.findOne({ username: decodedRefreshToken.username })
