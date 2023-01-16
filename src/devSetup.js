@@ -17,7 +17,7 @@ const users = [{
   __v: 0
 }, {
   _id: "63ba3996ca62e0ba8b151647",
-  username: "amy",
+  username: "amyyyyyy",
   password: "$2a$08$8HQA3YqcT3/8ow5R11i0NeTv2FEvNX41gEx1N9M4QWpLA/iW5QK4a",
   role: "USER",
   __v: 0
@@ -29,31 +29,52 @@ const conversations = [{
   "user2": "63ba398dca62e0ba8b151643",
   "__v": 0,
   "lastMessage": "63ba40bfc6dd1fd1ff9df59f"
+},
+{
+  "_id": "63ba409ec6dd1fd1ff9df123",
+  "user1": "63ba398cca62e0ba8b15163f",
+  "user2": "63ba3996ca62e0ba8b151647",
+  "__v": 0,
+  "lastMessage": "63ba40bfc6dd1fd1ff9df59f"
 }]
 
-const messages = [{
-  "_id": "63ba40bfc6dd1fd1ff9df59f",
-  "sender": "63ba398cca62e0ba8b15163f",
-  "text": "привет",
-  "createdAt": {
-    "$date": {
-      "$numberLong": "1673150575678"
-    }
+const messages = [
+  {
+    "_id": "63ba40bfc6dd1fd1ff9df59f",
+    "sender": "63ba398cca62e0ba8b15163f",
+    "text": "привет",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1673150575678"
+      }
+    },
+    "conversation": "63ba409ec6dd1fd1ff9df592",
+    "__v": 0
   },
-  "conversation": "63ba409ec6dd1fd1ff9df592",
-  "__v": 0
-}, {
-  "_id": "63ba40bfc6dd1fd1ff9df59w",
-  "sender": "63ba398cca62e0ba8b15163f",
-  "text": "привет привет",
-  "createdAt": {
-    "$date": {
-      "$numberLong": "1673150575679"
-    }
+  {
+    "_id": "63ba40bfc6dd1fd1ff9df59w",
+    "sender": "63ba398cca62e0ba8b15163f",
+    "text": "привет привет",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1673150575679"
+      }
+    },
+    "conversation": "63ba409ec6dd1fd1ff9df592",
+    "__v": 0
   },
-  "conversation": "63ba409ec6dd1fd1ff9df592",
-  "__v": 0
-}]
+  {
+    "_id": "63ba40bfc6dd1fd1ff9df12w",
+    "sender": "63ba398cca62e0ba8b15163f",
+    "text": "hello",
+    "createdAt": {
+      "$date": {
+        "$numberLong": "1673150575679"
+      }
+    },
+    "conversation": "63ba409ec6dd1fd1ff9df123",
+    "__v": 0
+  }]
 
 const devSetup = async () => {
   await UserRepository.create(users, { validateBeforeSave: false })
