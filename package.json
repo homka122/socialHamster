@@ -11,12 +11,15 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "joi": "^17.7.0",
     "jsonwebtoken": "^9.0.0",
     "mongoose": "^6.8.2",
+    "validator": "^13.7.0",
     "ws": "^8.12.0"
   },
   "devDependencies": {
-    "@types/mongoose": "^5.11.97"
+    "@types/mongoose": "^5.11.97",
+    "@types/validator": "^13.7.10"
   },
   "scripts": {
     "start": "node -r dotenv/config src/server.js",
