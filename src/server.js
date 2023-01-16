@@ -1,7 +1,8 @@
 import mongoose from "mongoose";
 import app from "./app.js";
 import devSetup from "./devSetup.js";
-import { WebSocketServer } from "ws";
+import { createWebsocketServer, websocketEmitter } from "./websocketApp.js";
+
 
 const start = async () => {
   mongoose.set('strictQuery', false)
@@ -17,14 +18,7 @@ const start = async () => {
     console.log(`http://localhost:${PORT}`)
   })
 
-  const wss = new WebSocketServer({ server })
-
-  wss.on('connection', (ws) => {
-    ws.send('something')
-    ws.on('message', data => {
-      console.log(data.toString())
-    })
-  })
+  createWebsocketServer(server, websocketEmitter)
 }
 
 start()

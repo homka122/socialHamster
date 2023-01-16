@@ -1,5 +1,7 @@
 import factoryRoutes from "../utils/factoryRoutes.js"
 import ConversationRepository from "../models/conversation.js"
+import { catchAsync } from "../utils/catchAsync.js"
+import { eventEmitter } from "../websocketApp.js"
 
 class ConverationsController {
   getAll = factoryRoutes.getAll(ConversationRepository)
@@ -8,7 +10,7 @@ class ConverationsController {
   updateOne = factoryRoutes.updateOne(ConversationRepository)
   deleteOne = factoryRoutes.deleteOne(ConversationRepository)
 
-  getUserConversations = async (req, res, next) => {
+  getUserConversations = catchAsync(async (req, res, next) => {
     const query = ConversationRepository
       .find({ $or: [{ user1: req.user._id }, { user2: req.user._id }] })
       .populate({
@@ -21,10 +23,12 @@ class ConverationsController {
       })
       .populate('user1', 'username')
       .populate('user2', 'username')
+      .sort('-lastMessage.createdAt')
 
     const userConversations = await query
     res.status(200).json({ status: 'success', data: userConversations })
-  }
+    eventEmitter.emit('fromServer', { message: 'test' })
+  })
 }
 
 const conversationsController = new ConverationsController()

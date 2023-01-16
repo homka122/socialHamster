@@ -2,6 +2,7 @@ import factoryRoutes from "../utils/factoryRoutes.js"
 import MessageRepository from '../models/message.js'
 import ConversationRepository from "../models/conversation.js"
 import UserRepository from "../models/user.js"
+import { catchAsync } from "../utils/catchAsync.js"
 
 class MessagesController {
   getAll = factoryRoutes.getAll(MessageRepository)
@@ -22,22 +23,22 @@ class MessagesController {
     return true;
   }
 
-  getUserMessagesFromConversation = async (req, res, next) => {
+  getUserMessagesFromConversation = catchAsync(async (req, res, next) => {
     const { id } = req.params
     const count = req.query.count || 200;
     const offset = req.query.offset || 0
 
-    const conversation = await ConversationRepository.findById(id)
+    const conversation = await ConversationRepository.findById(id).populate('user1').populate('user2')
 
     if (!this.isUserHaveAccessToConverastion(req.user, conversation)) {
       return next(new Error('Нет доступа к данной переписке или её не существует'))
     }
 
-    const messages = await MessageRepository.find({ conversation: conversation._id }).sort('-createdAt').limit(count).skip(offset)
-    res.status(200).json({ status: 'success', data: messages })
-  }
+    const messages = await MessageRepository.find({ conversation: conversation._id }).sort('createdAt').limit(count).skip(offset)
+    res.status(200).json({ status: 'success', data: { messages, conversation } })
+  })
 
-  sendMessageToUser = async (req, res, next) => {
+  sendMessageToUser = catchAsync(async (req, res, next) => {
     const { text, username } = req.body
 
     const userThatGet = await UserRepository.findOne({ username })
@@ -55,8 +56,13 @@ class MessagesController {
     }
 
     const message = await MessageRepository.create({ sender: req.user._id, text, conversation })
-    res.status(201).json({ status: 'success', data: { message: message.text } })
-  }
+    // NEED FIX
+    const server = await connectToWebsocket();
+    server.send(JSON.stringify({ event: 'sendMessage', sender: req.user, userThatGet: userThatGet, message, password: process.env.WS_PASSWORD }))
+    server.close();
+    //
+    res.status(201).json({ status: 'success', data: { message } })
+  })
 }
 
 const messagesController = new MessagesController()

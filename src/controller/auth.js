@@ -11,12 +11,13 @@ class AuthController {
     const { accessToken, refreshToken } = authService.generateTokens({ username, role })
     await authService.saveTokenToDB(refreshToken, user)
 
-    res.cookie('refreshToken', refreshToken, { httpOnly: true })
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: 15 * 60 * 1000, sameSite: 'none', secure: true })
     res.status(200).send({ status: 'success', data: { user: userForSend, accessToken } })
   }
 
-  signup = async (req, res, next) => {
+  signup = catchAsync(async (req, res, next) => {
     const { username, password } = req.body
+
     const user = await UserRepository.findOne({ username })
 
     if (user) {
@@ -24,10 +25,10 @@ class AuthController {
     }
 
     const hashedPassword = await authService.hashPassowrd(password)
-    const newUser = await UserRepository.create({ username, password: hashedPassword })
+    const createdUser = await UserRepository.create({ username, password: hashedPassword })
 
-    this.sendAccessTokenAndSetRefreshToken(newUser, res)
-  }
+    this.sendAccessTokenAndSetRefreshToken(createdUser, res)
+  })
 
   login = catchAsync(async (req, res, next) => {
     const { username, password } = req.body
