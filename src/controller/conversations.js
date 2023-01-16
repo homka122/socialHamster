@@ -1,7 +1,7 @@
 import factoryRoutes from "../utils/factoryRoutes.js"
 import ConversationRepository from "../models/conversation.js"
 import { catchAsync } from "../utils/catchAsync.js"
-import { eventEmitter } from "../websocketApp.js"
+import { websocketEmitter } from "../websocketApp.js"
 
 class ConverationsController {
   getAll = factoryRoutes.getAll(ConversationRepository)
