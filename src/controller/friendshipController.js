@@ -1,3 +1,4 @@
+import FriendListRepository from "../models/friendList.js";
 import FriendshipRepository from "../models/friendship.js";
 import UserRepository from "../models/user.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -74,4 +75,25 @@ export const sendFriendRequest = catchAsync(async (req, res, next) => {
 
     return next(new ApiError('Bad Request', 400))
   }
+})
+
+export const getFriendsAndSubscribers = catchAsync(async (req, res, next) => {
+  const list = await FriendListRepository.find({ $or: [{ user1: req.user }, { user2: req.user }] }).populate('user1', 'username').populate('user2', 'username').populate('currentStatus')
+  console.log(list)
+  let friends = []
+  let subscribers = []
+  list.forEach(friendship => {
+    const anotherUser = friendship.user1.username === req.user.username ? friendship.user2 : friendship.user1
+
+    if (friendship.currentStatus.status === 'Accepted') {
+      friends.push(anotherUser)
+    }
+
+    if (friendship.currentStatus.status === 'Requested' && friendship.currentStatus.sender.equals(anotherUser._id) || friendship.currentStatus.status === 'Declined' && friendship.currentStatus.reciever.equals(anotherUser._id)) {
+      subscribers.push(anotherUser)
+    }
+
+  })
+
+  res.status(200).json({ status: 'success', data: { friends, subscribers } })
 })
