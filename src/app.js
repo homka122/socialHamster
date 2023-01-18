@@ -3,6 +3,7 @@ import authRouter from './router/auth.js'
 import conversationsRouter from './router/conversations.js'
 import messagesRouter from './router/messages.js'
 import usersRouter from './router/users.js'
+import postsRouter from './router/posts.js'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import { errorMiddleware } from './middleware/errorMiddleware.js'
@@ -17,6 +18,7 @@ app.use('/api/auth', authRouter)
 app.use('/api/conversations', conversationsRouter)
 app.use('/api/messages', messagesRouter)
 app.use('/api/users', usersRouter)
+app.use('/api/posts', postsRouter)
 
 app.use(errorMiddleware)
 
