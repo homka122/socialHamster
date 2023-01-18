@@ -1,3 +1,4 @@
+import TokenRepository from "../models/token.js";
 import UserRepository from "../models/user.js";
 import authService from "../service/auth.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -11,7 +12,7 @@ class AuthController {
     const { accessToken, refreshToken } = authService.generateTokens({ username, role })
     await authService.saveTokenToDB(refreshToken, user)
 
-    res.cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: 15 * 60 * 1000, sameSite: 'none', secure: true })
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: 15 * 24 * 60 * 60 * 1000 })
     res.status(200).send({ status: 'success', data: { user: userForSend, accessToken } })
   }
 
@@ -55,6 +56,11 @@ class AuthController {
 
     const decodedRefreshToken = authService.verifyRefreshToken(refreshToken)
     if (!decodedRefreshToken) {
+      return next(new ApiError('Невалидный refresh token', 403))
+    }
+
+    const tokenFromDB = await TokenRepository.findOne({ token: refreshToken }).populate('user');
+    if (!tokenFromDB) {
       return next(new ApiError('Невалидный refresh token', 403))
     }
 

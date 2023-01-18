@@ -17,9 +17,8 @@ class AuthService {
     return { accessToken, refreshToken }
   }
 
-  // User already exists
   saveTokenToDB = async (token, user) => {
-    // update if old record don't exists
+    // create if old record don't exists
     await TokenRepository.updateOne({ user: user._id }, { token, user }, { upsert: true })
   }
 

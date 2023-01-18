@@ -23,11 +23,30 @@ class ConverationsController {
       })
       .populate('user1', 'username')
       .populate('user2', 'username')
+      .select('-__v')
       .sort('-lastMessage.createdAt')
 
     const userConversations = await query
-    res.status(200).json({ status: 'success', data: userConversations })
-    eventEmitter.emit('fromServer', { message: 'test' })
+
+    // Define "peer" field
+    const formatedUserConversations = userConversations.map(conversation => {
+      let conversationForSend = { ...conversation.toObject() }
+
+      if (conversation.user1.username === req.user.username) {
+        conversationForSend.peer = conversation.user2;
+        delete conversationForSend.user1;
+        delete conversationForSend.user2;
+      } else if (conversation.user2.username === req.user.username) {
+        conversationForSend.peer = conversation.user1;
+        delete conversationForSend.user1;
+        delete conversationForSend.user2;
+      }
+
+      return conversationForSend
+    })
+
+    res.status(200).json({ status: 'success', data: { conversations: formatedUserConversations } })
+    websocketEmitter.emit('fromServer', { message: 'test' })
   })
 }
 

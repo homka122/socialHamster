@@ -8,10 +8,8 @@ const router = Router()
 router.use(isLogin)
 
 router.route('/')
+  .get(messagesController.getMessagesFromConversation)
   .post(messagesController.sendMessageToUser)
-
-router.route('/:id')
-  .get(messagesController.getUserMessagesFromConversation)
 
 router.use(roleCheck('ADMIN'))
 
