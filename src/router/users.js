@@ -6,6 +6,10 @@ import { roleCheck } from "../middleware/roleCheck.js";
 const router = Router()
 
 router.use(isLogin)
+
+router.route('/:id')
+  .get(usersController.getUserInfo)
+
 router.use(roleCheck('ADMIN'))
 
 router.route('/')
