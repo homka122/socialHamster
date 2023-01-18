@@ -19,7 +19,7 @@ class AuthController {
   signup = catchAsync(async (req, res, next) => {
     const { username, password } = req.body
 
-    const user = await UserRepository.findOne({ username })
+    const user = await UserRepository.findOne({ username }).select('+password')
 
     if (user) {
       return next(new ApiError('Пользователь с таким никнеймом уже существует', 400))
@@ -33,7 +33,7 @@ class AuthController {
 
   login = catchAsync(async (req, res, next) => {
     const { username, password } = req.body
-    const user = await UserRepository.findOne({ username })
+    const user = await UserRepository.findOne({ username }).select('+password')
 
     if (!user) {
       return next(new ApiError('Неверный никнейм или пароль!', 400))
@@ -64,7 +64,7 @@ class AuthController {
       return next(new ApiError('Невалидный refresh token', 403))
     }
 
-    const user = await UserRepository.findOne({ username: decodedRefreshToken.username })
+    const user = await UserRepository.findOne({ username: decodedRefreshToken.username }).select('+password')
 
     this.sendAccessTokenAndSetRefreshToken(user, res)
   }
