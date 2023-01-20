@@ -77,7 +77,7 @@ export const sendFriendRequest = catchAsync(async (req, res, next) => {
   }
 })
 
-export const getFriendsAndSubscribers = catchAsync(async (req, res, next) => {
+export const getMyFriendsAndSubscribers = catchAsync(async (req, res, next) => {
   const list = await FriendListRepository.find({ $or: [{ user1: req.user }, { user2: req.user }] }).populate('user1', 'username').populate('user2', 'username').populate('currentStatus')
   console.log(list)
   let friends = []

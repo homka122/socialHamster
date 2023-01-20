@@ -19,6 +19,7 @@ app.use('/api/conversations', conversationsRouter)
 app.use('/api/messages', messagesRouter)
 app.use('/api/users', usersRouter)
 app.use('/api/posts', postsRouter)
+app.use('/api/friendship', friendshipRouter)
 
 app.use(errorMiddleware)
 
