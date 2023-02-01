@@ -1,24 +1,22 @@
-import { Router } from "express";
-import usersController from "../controller/users.js";
-import { isLogin } from "../middleware/isLogin.js";
-import { roleCheck } from "../middleware/roleCheck.js";
+import { Router } from 'express';
+import usersController from '../controller/users.js';
+import { uploadAvatar } from '../middleware/fileUpload.js';
+import { isLogin } from '../middleware/isLogin.js';
+import { roleCheck } from '../middleware/roleCheck.js';
 
-const router = Router()
+const router = Router();
 
-router.use(isLogin)
+router.use(isLogin);
 
-router.route('/:id')
-  .get(usersController.getUserInfo)
+router.patch('/updatePhoto', uploadAvatar.single('avatar'), usersController.updatePhoto);
+router.get('/getPhoto', usersController.getPhoto);
 
-router.use(roleCheck('ADMIN'))
+router.route('/:id').get(usersController.getUserInfo);
 
-router.route('/')
-  .get(usersController.getAll)
-  .post(usersController.createOne)
+router.use(roleCheck('ADMIN'));
 
-router.route('/:id')
-  .get(usersController.getOne)
-  .patch(usersController.updateOne)
-  .delete(usersController.deleteOne)
+router.route('/').get(usersController.getAll).post(usersController.createOne);
 
-export default router
+router.route('/:id').get(usersController.getOne).patch(usersController.updateOne).delete(usersController.deleteOne);
+
+export default router;

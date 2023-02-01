@@ -10,6 +10,9 @@ router.use(isLogin)
 router.route('/')
   .get(conversationsController.getUserConversations)
 
+router.route('/:id')
+  .get(conversationsController.getUserConversation)
+
 router.use(roleCheck('ADMIN'))
 
 router.route('/admin')

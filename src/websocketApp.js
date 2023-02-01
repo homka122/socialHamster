@@ -1,5 +1,6 @@
 import { WebSocketServer } from "ws";
 import Event from "events";
+import { verify } from "jsonwebtoken";
 
 export const websocketEmitter = new Event();
 
@@ -20,23 +21,16 @@ export const createWebsocketServer = (server, websocketEmitter) => {
         ws.close();
       }
     }
-
-    ws.on('message', message => {
-      const data = JSON.parse(message)
-
-      if (data.event === 'sendMessage') {
-        wss.clients.forEach(client => {
-          console.log(data.userThatGet, '1')
-          if (client?.username === data.sender.username || client?.username === data.userThatGet.username) {
-            client.send(JSON.stringify({ event: 'newMessage', message: data.message }))
-          }
-        })
-      }
-    })
   })
 
   wss.on('fromServer', message => {
-    console.log(message)
+    if (message.event === 'sendMessage') {
+      wss.clients.forEach(client => {
+        if (client?.username === message.sender.username || client?.username === message.reciever.username) {
+          client.send(JSON.stringify({ event: 'newMessage', message: message.message, sender: message.sender, reciever: message.reciever }))
+        }
+      })
+    }
   })
 
   return wss

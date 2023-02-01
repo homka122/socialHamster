@@ -7,7 +7,13 @@ const router = Router()
 router.use(isLogin)
 
 router.route('/')
-  .get(friendshipController.getMyFriendsAndSubscribers)
+  .get(friendshipController.getAllFriendships)
   .post(friendshipController.sendFriendRequest)
+
+router.route('/:userId')
+  .get(friendshipController.getFriendsAndSubscribers)
+
+router.route('/:userId/status')
+  .get(friendshipController.getFriendshipStatus)
 
 export default router
