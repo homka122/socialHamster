@@ -1,7 +1,10 @@
-import FriendListRepository from '../models/friendList.js';
+import mongoose, { Query } from 'mongoose';
+import FriendListRepository, { IFriendList } from '../models/friendList.js';
+import { IFriendship } from '../models/friendship.js';
+import { IUser } from '../models/user.js';
 
 class FriendshipService {
-  populateQuery(query) {
+  populateQuery(query: Query<any, any, any, any>) {
     return query
       .populate('user1', 'username')
       .populate('user2', 'username')
@@ -9,7 +12,7 @@ class FriendshipService {
       .select('-__v');
   }
 
-  async findCurrentStatus(user1, user2) {
+  async findCurrentStatus(user1: IUser, user2: IUser) {
     const condition = {
       $or: [
         { user1, user2 },
@@ -21,16 +24,19 @@ class FriendshipService {
     return result;
   }
 
-  async findAllStatuses(user) {
+  async findAllStatuses(user: IUser) {
     const condition = { $or: [{ user1: user }, { user2: user }] };
     const query = this.populateQuery(FriendListRepository.find(condition));
     const result = await query;
     return result;
   }
 
-  friendsAndSubscribersFromStatuses(list, userId) {
-    let friends = [];
-    let subscribers = [];
+  friendsAndSubscribersFromStatuses(
+    list: (IFriendList & { currentStatus: IFriendship })[],
+    userId: mongoose.Types.ObjectId
+  ) {
+    let friends: any = [];
+    let subscribers: any = [];
     list.forEach((friendship) => {
       const anotherUser = friendship.user1.equals(userId) ? friendship.user2 : friendship.user1;
 
