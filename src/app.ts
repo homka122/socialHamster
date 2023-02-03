@@ -16,7 +16,7 @@ if (process.env.NODE_ENV) origin = 'http://localhost:3000';
 
 const app = express();
 
-// app.use(morgan('dev'))
+app.use(morgan('dev'));
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ origin, credentials: true }));
