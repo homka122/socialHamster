@@ -1,13 +1,16 @@
 import { catchAsync } from '../utils/catchAsync.js';
-import PostRepository from '../models/post.js';
-import UserRepository from '../models/user.js';
+import PostRepository, { IPost } from '../models/post.js';
+import UserRepository, { IUser } from '../models/user.js';
 import mongoose from 'mongoose';
+import { NextFunction, Request, Response } from 'express';
 
 class PostsController {
-  createPost = catchAsync(async (req, res, next) => {
+  createPost = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { text } = req.body;
-    const post = await PostRepository.create({ text, author: req.user._id });
-    let formattedPost = (await post.populate('author', 'username')).toJSON();
+    const post = await PostRepository.create({ text, author: req.user });
+
+    let formattedPost: IPost & { isLiked: boolean; likesCount: number; commentsCount: number };
+    formattedPost = (await post.populate('author', 'username')).toJSON();
     formattedPost.isLiked = false;
     formattedPost.likesCount = 0;
     formattedPost.commentsCount = 0;
@@ -15,9 +18,9 @@ class PostsController {
     res.status(200).json({ status: 'success', data: { post: formattedPost } });
   });
 
-  getAllPosts = catchAsync(async (req, res, next) => {
-    const { userId } = req.query;
-    const aggregate = [
+  getAllPosts = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const userId = String(req.query.userId);
+    const aggregate: any[] = [
       {
         $lookup: {
           from: 'likes',
@@ -80,7 +83,7 @@ class PostsController {
     ];
 
     if (userId) {
-      aggregate.unshift({ $match: { author: mongoose.Types.ObjectId(userId) } });
+      aggregate.unshift({ $match: { author: new mongoose.Types.ObjectId(userId) } });
     }
 
     const posts = await PostRepository.aggregate(aggregate);

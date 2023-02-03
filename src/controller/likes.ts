@@ -1,9 +1,10 @@
+import { NextFunction, Request, Response } from 'express';
 import LikeRepository from '../models/like.js';
 import PostRepository from '../models/post.js';
 import { ApiError } from '../utils/ApiError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 
-export const likePost = catchAsync(async (req, res, next) => {
+export const likePost = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { postId } = req.body;
   let type;
 

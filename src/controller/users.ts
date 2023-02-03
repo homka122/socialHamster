@@ -3,6 +3,7 @@ import UserRepository from '../models/user.js';
 import { catchAsync } from '../utils/catchAsync.js';
 import { ApiError } from '../utils/ApiError.js';
 import { __dirname } from '../utils/__dirname.js';
+import { NextFunction, Request, Response } from 'express';
 
 class UsersController {
   getAll = factoryRoutes.getAll(UserRepository);
@@ -11,7 +12,7 @@ class UsersController {
   updateOne = factoryRoutes.updateOne(UserRepository);
   deleteOne = factoryRoutes.deleteOne(UserRepository);
 
-  getUserInfo = catchAsync(async (req, res, next) => {
+  getUserInfo = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
     const user = await UserRepository.findById(id).select('username');
 
@@ -22,26 +23,11 @@ class UsersController {
     res.status(200).json({ status: 'success', data: { user } });
   });
 
-  updatePhoto = catchAsync(async (req, res, next) => {
+  updatePhoto = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.file) return next(new ApiError('Нет приложенного файла'));
+
     await UserRepository.findByIdAndUpdate(req.user._id, { profilePhoto: req.file.filename });
     res.status(200).send({ status: 'success' });
-  });
-
-  getPhoto = catchAsync(async (req, res, next) => {
-    let { username } = req.query;
-    username = username || req.user.username;
-    const user = await UserRepository.findOne({ username });
-
-    if (!user) {
-      return next(new ApiError('Пользователя с таким именем не существует', 400));
-    }
-
-    const filename = user.profilePhoto;
-    if (!filename) {
-      return next(new ApiError('У пользователя нет фото профиля', 400));
-    }
-
-    res.status(200).sendFile(__dirname + '/public/avatars/' + username + '-avatar.jpg');
   });
 }
 

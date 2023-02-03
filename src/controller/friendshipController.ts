@@ -1,3 +1,4 @@
+import { Request, Response, NextFunction } from 'express';
 import FriendListRepository from '../models/friendList.js';
 import FriendshipRepository from '../models/friendship.js';
 import UserRepository from '../models/user.js';
@@ -5,7 +6,7 @@ import { friendshipService } from '../service/friendship.js';
 import { ApiError } from '../utils/ApiError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 
-export const sendFriendRequest = catchAsync(async (req, res, next) => {
+export const sendFriendRequest = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   // type = 'add' || 'delete'
   const { username, type } = req.body;
 
@@ -88,7 +89,7 @@ export const sendFriendRequest = catchAsync(async (req, res, next) => {
   }
 });
 
-export const getFriendsAndSubscribers = catchAsync(async (req, res, next) => {
+export const getFriendsAndSubscribers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.params;
   const list = await friendshipService.findAllStatuses(userId);
   const { friends, subscribers } = friendshipService.friendsAndSubscribersFromStatuses(list, userId);
@@ -96,14 +97,14 @@ export const getFriendsAndSubscribers = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: 'success', data: { friends, subscribers } });
 });
 
-export const getFriendshipStatus = catchAsync(async (req, res, next) => {
+export const getFriendshipStatus = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.params;
   const status = await friendshipService.findCurrentStatus(req.user._id, userId);
 
   res.status(200).json({ status: 'success', data: { status } });
 });
 
-export const getAllFriendships = catchAsync(async (req, res, next) => {
+export const getAllFriendships = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const list = await friendshipService.findAllStatuses(req.user._id);
 
   res.status(200).json({ status: 'success', data: { friendships: list } });

@@ -1,10 +1,12 @@
-import factoryRoutes from '../utils/factoryRoutes.js';
-import MessageRepository from '../models/message.js';
-import ConversationRepository from '../models/conversation.js';
-import UserRepository from '../models/user.js';
-import { catchAsync } from '../utils/catchAsync.js';
-import { ApiError } from '../utils/ApiError.js';
-import { websocketEmitter } from '../websocketApp.js';
+import factoryRoutes from '../utils/factoryRoutes';
+import MessageRepository from '../models/message';
+import ConversationRepository, { IConversation } from '../models/conversation';
+import UserRepository, { IUser } from '../models/user';
+import { catchAsync } from '../utils/catchAsync';
+import { ApiError } from '../utils/ApiError';
+import { websocketEmitter, WS_EVENTS } from '../websocketApp';
+import { NextFunction, Request, Response } from 'express';
+import * as messagesService from '../service/messages';
 
 class MessagesController {
   getAll = factoryRoutes.getAll(MessageRepository);
@@ -13,11 +15,7 @@ class MessagesController {
   updateOne = factoryRoutes.updateOne(MessageRepository);
   deleteOne = factoryRoutes.deleteOne(MessageRepository);
 
-  isUserHaveAccessToConverastion = (user, conversation) => {
-    if (!conversation) {
-      return false;
-    }
-
+  isUserHaveAccessToConverastion = (user: IUser, conversation: IConversation): boolean => {
     if (conversation.user1.equals(user._id) || conversation.user2.equals(user._id)) {
       return true;
     }
@@ -25,16 +23,20 @@ class MessagesController {
     return false;
   };
 
-  getMessagesFromConversation = catchAsync(async (req, res, next) => {
+  getMessagesFromConversation = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const count = Number(req.query.count) || 200;
+    const offset = Number(req.query.offset) || 0;
     const { id } = req.query;
+
     if (!id) {
       return next(new ApiError('Для получения сообщений необходимо указать ID беседы.', 400));
     }
 
-    const count = req.query.count || 200;
-    const offset = req.query.offset || 0;
+    const conversation = await ConversationRepository.findById(id);
 
-    const conversation = await ConversationRepository.findById(id).populate('user1').populate('user2');
+    if (!conversation) {
+      return next(new ApiError('Беседы с таким ID не существует'));
+    }
 
     if (!this.isUserHaveAccessToConverastion(req.user, conversation)) {
       return next(new ApiError('Нет доступа к данной переписке или её не существует', 400));
@@ -45,10 +47,11 @@ class MessagesController {
       .select('-__v')
       .limit(count)
       .skip(offset);
+
     res.status(200).json({ status: 'success', data: { messages } });
   });
 
-  sendMessageToUser = catchAsync(async (req, res, next) => {
+  sendMessageToUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { text, username } = req.body;
 
     const receiver = await UserRepository.findOne({ username });
@@ -56,22 +59,15 @@ class MessagesController {
       return next(new ApiError('Пользователя с таким именем нет'));
     }
 
-    let conversation;
-
-    const conversationCandidate = await ConversationRepository.findOne({
-      $or: [
-        { user1: req.user._id, user2: receiver._id },
-        { user1: receiver._id, user2: req.user._id },
-      ],
-    });
-    if (!conversationCandidate) {
-      conversation = await ConversationRepository.create({ user1: req.user, user2: receiver });
-    } else {
-      conversation = conversationCandidate;
-    }
+    const conversation = await messagesService.getConversation(req.user, receiver);
 
     const message = await MessageRepository.create({ sender: req.user._id, text, conversation: conversation._id });
-    websocketEmitter.emit('fromServer', { event: 'sendMessage', sender: req.user, reciever: receiver, message });
+    websocketEmitter.emit(WS_EVENTS.fromServer, {
+      event: WS_EVENTS.newMessage,
+      sender: req.user,
+      reciever: receiver,
+      message,
+    });
     res.status(201).json({ status: 'success', data: { message } });
   });
 }

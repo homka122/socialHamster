@@ -1,8 +1,9 @@
+import { Request, Response, NextFunction } from 'express';
 import CommentRepository from '../models/comment.js';
-import PostRepository from '../models/post.js';
+import { ApiError } from '../utils/ApiError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 
-export const getAllComments = catchAsync(async (req, res, next) => {
+export const getAllComments = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { postId } = req.params;
   const comments = await CommentRepository.find({ post: postId })
     .populate('user', 'username')
@@ -13,22 +14,24 @@ export const getAllComments = catchAsync(async (req, res, next) => {
   res.status(200).json({ status: 'success', data: { comments } });
 });
 
-export const addComment = catchAsync(async (req, res, next) => {
+export const addComment = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { postId } = req.params;
   const { text } = req.body;
 
   const comment = await CommentRepository.create({ post: postId, user: req.user._id, text });
-  let formattedComment = (await comment.populate('user', 'username')).toJSON();
+  let formattedComment: any = (await comment.populate('user', 'username')).toJSON();
   formattedComment.likeUsers = [];
   delete formattedComment.__v;
 
   res.status(200).json({ status: 'success', data: { comment: formattedComment } });
 });
 
-export const likeComment = catchAsync(async (req, res, next) => {
+export const likeComment = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { commentId } = req.params;
 
   const comment = await CommentRepository.findById(commentId);
+
+  if (!comment) return next(new ApiError('Комментария с данным ID нет'));
 
   let expression;
 
