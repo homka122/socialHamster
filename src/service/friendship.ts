@@ -12,11 +12,11 @@ class FriendshipService {
       .select('-__v');
   }
 
-  async findCurrentStatus(user1: IUser, user2: IUser) {
+  async findCurrentStatus(user1ID: mongoose.Types.ObjectId, user2ID: mongoose.Types.ObjectId) {
     const condition = {
       $or: [
-        { user1, user2 },
-        { user1: user2, user2: user1 },
+        { user1: user1ID, user2: user2ID },
+        { user1: user2ID, user2: user1ID },
       ],
     };
     const query = this.populateQuery(FriendListRepository.findOne(condition));
@@ -24,17 +24,14 @@ class FriendshipService {
     return result;
   }
 
-  async findAllStatuses(user: IUser) {
-    const condition = { $or: [{ user1: user }, { user2: user }] };
+  async findAllStatuses(userId: mongoose.Types.ObjectId) {
+    const condition = { $or: [{ user1: userId }, { user2: userId }] };
     const query = this.populateQuery(FriendListRepository.find(condition));
     const result = await query;
     return result;
   }
 
-  friendsAndSubscribersFromStatuses(
-    list: (IFriendList & { currentStatus: IFriendship })[],
-    userId: mongoose.Types.ObjectId
-  ) {
+  friendsAndSubscribersFromStatuses(list: (IFriendList & { currentStatus: IFriendship })[], userId: string) {
     let friends: any = [];
     let subscribers: any = [];
     list.forEach((friendship) => {

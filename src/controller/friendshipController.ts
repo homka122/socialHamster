@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import mongoose from 'mongoose';
 import FriendListRepository from '../models/friendList.js';
 import FriendshipRepository from '../models/friendship.js';
 import UserRepository from '../models/user.js';
@@ -91,7 +92,7 @@ export const sendFriendRequest = catchAsync(async (req: Request, res: Response, 
 
 export const getFriendsAndSubscribers = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.params;
-  const list = await friendshipService.findAllStatuses(userId);
+  const list = await friendshipService.findAllStatuses(new mongoose.Types.ObjectId(userId));
   const { friends, subscribers } = friendshipService.friendsAndSubscribersFromStatuses(list, userId);
 
   res.status(200).json({ status: 'success', data: { friends, subscribers } });
@@ -99,7 +100,7 @@ export const getFriendsAndSubscribers = catchAsync(async (req: Request, res: Res
 
 export const getFriendshipStatus = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { userId } = req.params;
-  const status = await friendshipService.findCurrentStatus(req.user._id, userId);
+  const status = await friendshipService.findCurrentStatus(req.user._id, new mongoose.Types.ObjectId(userId));
 
   res.status(200).json({ status: 'success', data: { status } });
 });
