@@ -3,13 +3,14 @@
 Social Hamster - мой первый пет проект.<br>
 Целью была попытка реализовать функционал социальной сети.<br>
 Backend и Frontend написаны мною с нуля. Весь код в проекте написан собственноручно.<br>
-**Я не Fronend разработчик и уж тем более не дизайнер, поэтому я не изучал лучших практик в построении Frontend приложений, тем не менее я старался написать качественный код**
+**Я не Fronend разработчик и уж тем более не дизайнер, поэтому я не изучал лучших практик в построении Frontend приложений, тем не менее я старался написать качественный код** \
+**Дизайн для мобильных устройство не предусмотрен. Для корректного отображения сайта следует заходить с ПК**
 
 Рабочий сайт проекта: https://socialhasmter.homka122.ru <br>
 Рабочее URL backend проекта: https://apisocialhasmter.homka122.ru
 
-BACKEND: https://github.com/homka122/socialHamster <br>
-FRONTEND: https://github.com/homka122/socialHamsterFrontend
+Backend: https://github.com/homka122/socialHamster <br>
+Frontend: https://github.com/homka122/socialHamsterFrontend
 
 ## Возможности сайта
 
