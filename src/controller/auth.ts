@@ -6,17 +6,19 @@ import { AccessTokenPayload } from '../types/AccessTokenPayload.js';
 import { ApiError } from '../utils/ApiError.js';
 import { catchAsync } from '../utils/catchAsync.js';
 
+const maxAgeRefreshCookie = 15 * 24 * 60 * 60 * 1000; // 15 days
+
 class AuthController {
-  sendAccessTokenAndSetRefreshToken = async (user: IUser, res: Response) => {
+  sendAccessTokenAndSetRefreshToken = catchAsync(async (user: IUser, res: Response) => {
     const { username, role, _id } = user;
     const userForSend = { username, role, _id };
 
     const { accessToken, refreshToken } = authService.generateTokens({ username, role });
     await authService.saveTokenToDB(refreshToken, user);
 
-    res.cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: 15 * 24 * 60 * 60 * 1000 });
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, maxAge: maxAgeRefreshCookie });
     res.status(200).send({ status: 'success', data: { user: userForSend, accessToken } });
-  };
+  });
 
   signup = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { username, password } = req.body;
@@ -61,7 +63,7 @@ class AuthController {
       return next(new ApiError('Невалидный refresh token', 403));
     }
 
-    const tokenFromDB = await TokenRepository.findOne({ token: refreshToken }).populate('user');
+    const tokenFromDB = await TokenRepository.findOne({ token: refreshToken });
     if (!tokenFromDB) {
       return next(new ApiError('Невалидный refresh token', 403));
     }
