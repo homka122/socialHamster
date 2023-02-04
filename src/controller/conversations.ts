@@ -9,12 +9,6 @@ import { IUser } from '../models/user.js';
 import { Document } from 'mongoose';
 
 class ConverationsController {
-  getAll = factoryRoutes.getAll(ConversationRepository);
-  getOne = factoryRoutes.getOne(ConversationRepository);
-  createOne = factoryRoutes.createOne(ConversationRepository);
-  updateOne = factoryRoutes.updateOne(ConversationRepository);
-  deleteOne = factoryRoutes.deleteOne(ConversationRepository);
-
   getUserConversations = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const query = ConversationRepository.find({ $or: [{ user1: req.user._id }, { user2: req.user._id }] })
       .populate({

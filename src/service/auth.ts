@@ -14,8 +14,8 @@ class AuthService {
   };
 
   generateTokens = (payload: object) => {
-    const accessToken = jwt.sign(payload, this.accessJwtSecret, { expiresIn: '15m' });
-    const refreshToken = jwt.sign(payload, this.refreshJwtSecret, { expiresIn: '15d' });
+    const accessToken = jwt.sign(payload, this.accessJwtSecret!, { expiresIn: '15m' });
+    const refreshToken = jwt.sign(payload, this.refreshJwtSecret!, { expiresIn: '15d' });
     return { accessToken, refreshToken };
   };
 
@@ -31,7 +31,7 @@ class AuthService {
 
   verifyRefreshToken = (refreshToken: string) => {
     try {
-      return jwt.verify(refreshToken, this.refreshJwtSecret) as AccessTokenPayload;
+      return jwt.verify(refreshToken, this.refreshJwtSecret!) as AccessTokenPayload;
     } catch (e) {
       return undefined;
     }
@@ -39,7 +39,7 @@ class AuthService {
 
   verifyAccessToken = (accessToken: string) => {
     try {
-      return jwt.verify(accessToken, this.accessJwtSecret) as AccessTokenPayload;
+      return jwt.verify(accessToken, this.accessJwtSecret!) as AccessTokenPayload;
     } catch (e) {
       return undefined;
     }

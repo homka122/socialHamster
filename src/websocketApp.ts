@@ -19,7 +19,7 @@ export const createWebsocketServer = (server: Server, websocketEmitter: Event) =
 
     if (token) {
       try {
-        const payload = verify(token, process.env.JWT_ACCESS_SECRET) as JwtPayload;
+        const payload = verify(token, process.env.JWT_ACCESS_SECRET!) as JwtPayload;
         socket.username = payload.username;
       } catch (e) {
         socket.close();
