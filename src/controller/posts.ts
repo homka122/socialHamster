@@ -19,7 +19,7 @@ class PostsController {
   });
 
   getAllPosts = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
-    const userId = String(req.query.userId);
+    const userId = req.query.userId;
     const aggregate: any[] = [
       {
         $lookup: {
@@ -83,7 +83,7 @@ class PostsController {
     ];
 
     if (userId) {
-      aggregate.unshift({ $match: { author: new mongoose.Types.ObjectId(userId) } });
+      aggregate.unshift({ $match: { author: new mongoose.Types.ObjectId(String(userId)) } });
     }
 
     const posts = await PostRepository.aggregate(aggregate);

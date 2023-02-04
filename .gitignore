@@ -4,3 +4,4 @@ node_modules
 requests
 tests
 src/public
+dist

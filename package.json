@@ -42,6 +42,7 @@
   "scripts": {
     "start": "ts-node --files -r dotenv/config src/server.ts",
     "dev": "cross-env NODE_ENV=development ts-node-dev -r dotenv/config --files src/server.ts",
+    "build": "tsc",
     "debug": "ts-node --files --inspect -r dotenv/config src/server.ts",
     "test": "jest --runInBand"
   }
