@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import FriendListRepository from './friendList.js';
+import FriendListRepository from './friendList';
 
 export interface IFriendship {
   _id: mongoose.Types.ObjectId;

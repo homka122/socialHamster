@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import conversationsController from '../controller/conversations.js';
-import { isLogin } from '../middleware/isLogin.js';
+import conversationsController from '../controller/conversations';
+import { isLogin } from '../middleware/isLogin';
 
 const router = Router();
 

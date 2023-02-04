@@ -1,6 +1,6 @@
-import { catchAsync } from '../utils/catchAsync.js';
-import PostRepository, { IPost } from '../models/post.js';
-import UserRepository, { IUser } from '../models/user.js';
+import { catchAsync } from '../utils/catchAsync';
+import PostRepository, { IPost } from '../models/post';
+import UserRepository, { IUser } from '../models/user';
 import mongoose from 'mongoose';
 import { NextFunction, Request, Response } from 'express';
 

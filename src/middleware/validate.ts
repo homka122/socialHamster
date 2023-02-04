@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import Joi from 'joi';
-import { ApiError } from '../utils/ApiError.js';
+import { ApiError } from '../utils/ApiError';
 
 export const validate = (dto: Joi.ObjectSchema) => async (req: Request, res: Response, next: NextFunction) => {
   try {

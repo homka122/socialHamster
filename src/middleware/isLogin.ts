@@ -1,9 +1,9 @@
-import authService from '../service/auth.js';
-import UserRepository from '../models/user.js';
-import { ApiError } from '../utils/ApiError.js';
+import authService from '../service/auth';
+import UserRepository from '../models/user';
+import { ApiError } from '../utils/ApiError';
 import { NextFunction, Request, Response } from 'express';
 import { JwtPayload } from 'jsonwebtoken';
-import { AccessTokenPayload } from '../types/AccessTokenPayload.js';
+import { AccessTokenPayload } from '../types/AccessTokenPayload';
 
 export const isLogin = async (req: Request, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;

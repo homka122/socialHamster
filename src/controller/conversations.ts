@@ -1,11 +1,11 @@
-import factoryRoutes from '../utils/factoryRoutes.js';
-import ConversationRepository, { IConversation } from '../models/conversation.js';
-import { catchAsync } from '../utils/catchAsync.js';
-import { websocketEmitter } from '../websocketApp.js';
+import factoryRoutes from '../utils/factoryRoutes';
+import ConversationRepository, { IConversation } from '../models/conversation';
+import { catchAsync } from '../utils/catchAsync';
+import { websocketEmitter } from '../websocketApp';
 import { NextFunction, query, Request, Response } from 'express';
-import { ApiError } from '../utils/ApiError.js';
-import { IMessage } from '../models/message.js';
-import { IUser } from '../models/user.js';
+import { ApiError } from '../utils/ApiError';
+import { IMessage } from '../models/message';
+import { IUser } from '../models/user';
 import { Document } from 'mongoose';
 
 class ConverationsController {

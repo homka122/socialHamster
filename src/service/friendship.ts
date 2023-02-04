@@ -1,7 +1,7 @@
 import mongoose, { Query } from 'mongoose';
-import FriendListRepository, { IFriendList } from '../models/friendList.js';
-import { IFriendship } from '../models/friendship.js';
-import { IUser } from '../models/user.js';
+import FriendListRepository, { IFriendList } from '../models/friendList';
+import { IFriendship } from '../models/friendship';
+import { IUser } from '../models/user';
 
 class FriendshipService {
   populateQuery(query: Query<any, any, any, any>) {

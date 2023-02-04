@@ -1,9 +1,9 @@
 import { Router } from 'express';
-import { isLogin } from '../middleware/isLogin.js';
-import postsController from '../controller/posts.js';
-import commentsRouter from './comments.js';
-import { validate } from '../middleware/validate.js';
-import { createPostDto } from '../dto/createPostDto.js';
+import { isLogin } from '../middleware/isLogin';
+import postsController from '../controller/posts';
+import commentsRouter from './comments';
+import { validate } from '../middleware/validate';
+import { createPostDto } from '../dto/createPostDto';
 
 const router = Router();
 

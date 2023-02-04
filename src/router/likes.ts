@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { isLogin } from '../middleware/isLogin.js';
-import * as likesController from '../controller/likes.js';
+import { isLogin } from '../middleware/isLogin';
+import * as likesController from '../controller/likes';
 
 const router = Router();
 

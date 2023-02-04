@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import usersController from '../controller/users.js';
-import { uploadAvatar } from '../middleware/fileUpload.js';
-import { isLogin } from '../middleware/isLogin.js';
-import { roleCheck } from '../middleware/roleCheck.js';
+import usersController from '../controller/users';
+import { uploadAvatar } from '../middleware/fileUpload';
+import { isLogin } from '../middleware/isLogin';
+import { roleCheck } from '../middleware/roleCheck';
 
 const router = Router();
 

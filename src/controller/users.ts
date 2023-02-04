@@ -1,8 +1,7 @@
-import factoryRoutes from '../utils/factoryRoutes.js';
-import UserRepository from '../models/user.js';
-import { catchAsync } from '../utils/catchAsync.js';
-import { ApiError } from '../utils/ApiError.js';
-import { __dirname } from '../utils/__dirname.js';
+import factoryRoutes from '../utils/factoryRoutes';
+import UserRepository from '../models/user';
+import { catchAsync } from '../utils/catchAsync';
+import { ApiError } from '../utils/ApiError';
 import { NextFunction, Request, Response } from 'express';
 
 class UsersController {

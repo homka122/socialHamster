@@ -1,5 +1,5 @@
 import mongoose, { mongo, Schema } from 'mongoose';
-import ConversationRepository from './conversation.js';
+import ConversationRepository from './conversation';
 
 export interface IMessage {
   _id: mongoose.Types.ObjectId;

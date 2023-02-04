@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import TokenRepository from '../models/token.js';
-import UserRepository, { IUser } from '../models/user.js';
-import authService from '../service/auth.js';
-import { AccessTokenPayload } from '../types/AccessTokenPayload.js';
-import { ApiError } from '../utils/ApiError.js';
-import { catchAsync } from '../utils/catchAsync.js';
+import TokenRepository from '../models/token';
+import UserRepository, { IUser } from '../models/user';
+import authService from '../service/auth';
+import { AccessTokenPayload } from '../types/AccessTokenPayload';
+import { ApiError } from '../utils/ApiError';
+import { catchAsync } from '../utils/catchAsync';
 
 const maxAgeRefreshCookie = 15 * 24 * 60 * 60 * 1000; // 15 days
 

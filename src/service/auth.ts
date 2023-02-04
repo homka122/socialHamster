@@ -1,8 +1,8 @@
 import jwt from 'jsonwebtoken';
-import TokenRepository from '../models/token.js';
+import TokenRepository from '../models/token';
 import bcrypt from 'bcryptjs';
-import { IUser } from '../models/user.js';
-import { AccessTokenPayload } from '../types/AccessTokenPayload.js';
+import { IUser } from '../models/user';
+import { AccessTokenPayload } from '../types/AccessTokenPayload';
 
 class AuthService {
   accessJwtSecret = process.env.JWT_ACCESS_SECRET;

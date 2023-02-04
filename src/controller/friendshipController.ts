@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
 import mongoose from 'mongoose';
-import FriendListRepository from '../models/friendList.js';
-import FriendshipRepository from '../models/friendship.js';
-import UserRepository from '../models/user.js';
-import { friendshipService } from '../service/friendship.js';
-import { ApiError } from '../utils/ApiError.js';
-import { catchAsync } from '../utils/catchAsync.js';
+import FriendListRepository from '../models/friendList';
+import FriendshipRepository from '../models/friendship';
+import UserRepository from '../models/user';
+import { friendshipService } from '../service/friendship';
+import { ApiError } from '../utils/ApiError';
+import { catchAsync } from '../utils/catchAsync';
 
 export const sendFriendRequest = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   // type = 'add' || 'delete'

@@ -1,7 +1,6 @@
-import ConversationRepository from './models/conversation.js';
-import MessageRepository from './models/message.js';
-import UserRepository from './models/user.js';
-import authService from './service/auth.js';
+import ConversationRepository from './models/conversation';
+import MessageRepository from './models/message';
+import UserRepository from './models/user';
 
 const users = [
   {

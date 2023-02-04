@@ -1,14 +1,14 @@
 import express from 'express';
-import authRouter from './router/auth.js';
-import likesRouter from './router/likes.js';
-import conversationsRouter from './router/conversations.js';
-import messagesRouter from './router/messages.js';
-import usersRouter from './router/users.js';
-import postsRouter from './router/posts.js';
+import authRouter from './router/auth';
+import likesRouter from './router/likes';
+import conversationsRouter from './router/conversations';
+import messagesRouter from './router/messages';
+import usersRouter from './router/users';
+import postsRouter from './router/posts';
 import cookieParser from 'cookie-parser';
-import friendshipRouter from './router/friendship.js';
+import friendshipRouter from './router/friendship';
 import cors from 'cors';
-import { errorMiddleware } from './middleware/errorMiddleware.js';
+import { errorMiddleware } from './middleware/errorMiddleware';
 import morgan from 'morgan';
 
 let origin = 'https://socialhamster.homka122.ru';

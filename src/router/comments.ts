@@ -1,16 +1,13 @@
-import { Router } from "express";
-import { isLogin } from "../middleware/isLogin.js";
-import * as commentsController from '../controller/comments.js'
+import { Router } from 'express';
+import { isLogin } from '../middleware/isLogin';
+import * as commentsController from '../controller/comments';
 
-const router = Router({ mergeParams: true })
+const router = Router({ mergeParams: true });
 
-router.use(isLogin)
+router.use(isLogin);
 
-router.route('/')
-  .get(commentsController.getAllComments)
-  .post(commentsController.addComment)
+router.route('/').get(commentsController.getAllComments).post(commentsController.addComment);
 
-router.route('/:commentId/like')
-  .get(commentsController.likeComment)
+router.route('/:commentId/like').get(commentsController.likeComment);
 
-export default router
+export default router;

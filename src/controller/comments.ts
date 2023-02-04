@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import CommentRepository from '../models/comment.js';
-import { ApiError } from '../utils/ApiError.js';
-import { catchAsync } from '../utils/catchAsync.js';
+import CommentRepository from '../models/comment';
+import { ApiError } from '../utils/ApiError';
+import { catchAsync } from '../utils/catchAsync';
 
 export const getAllComments = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { postId } = req.params;
