@@ -54,3 +54,17 @@ export const likeComment = catchAsync(async (req: Request, res: Response, next: 
 
   res.status(200).json({ status: 'success', data: { comment: updatedComment } });
 });
+
+export const deleteComment = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+  const commentId = req.params.postId;
+
+  const comment = await CommentRepository.findById(commentId);
+  if (!comment) return next(new ApiError('Комментария с данным ID нет.'));
+
+  if (!comment.user.equals(req.user._id)) {
+    return next(new ApiError('Нет доступа'));
+  }
+
+  await comment.delete();
+  res.status(204).json({ status: 'success' });
+});
