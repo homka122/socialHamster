@@ -71,6 +71,20 @@ class PostsController {
 
     res.status(200).json({ status: 'success', data: { posts } });
   });
+
+  deletePost = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const postId = req.params.postId;
+
+    const post = await PostRepository.findById(postId);
+    if (!post) return next(new ApiError('Поста с данным ID нет.'));
+
+    if (!post.author.equals(req.user._id)) {
+      return next(new ApiError('Нет доступа'));
+    }
+
+    await post.delete();
+    res.status(204).json({ status: 'success' });
+  });
 }
 
 const postsController = new PostsController();

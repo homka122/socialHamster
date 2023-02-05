@@ -10,6 +10,7 @@ const router = Router();
 router.use(isLogin);
 
 router.route('/').get(postsController.getAllPosts).post(validate(createPostDto), postsController.createPost);
+router.route('/:postId').delete(postsController.deletePost);
 
 router.use('/:postId/comments', commentsRouter);
 
