@@ -57,7 +57,8 @@ sudo vim /etc/mongod.conf (или любой другой редактор) \
 DB_URL=mongodb://mongoservice:27017/socialHamsterTest \
 PORT=5000 \
 JWT_ACCESS_SECRET=dskfj2093jkfdsj0394j1fj3hj3 \
-JWT_REFRESH_SECRET=jh4g6j2hgu234hv6h2uehv23h4g
+JWT_REFRESH_SECRET=jh4g6j2hgu234hv6h2uehv23h4g \
+NODE_ENV=development
 
 ### Запуск контейнера:
 
