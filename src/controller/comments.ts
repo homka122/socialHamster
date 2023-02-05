@@ -5,11 +5,16 @@ import { catchAsync } from '../utils/catchAsync';
 
 export const getAllComments = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
   const { postId } = req.params;
+  const count = Number(req.query.count) || 50;
+  const offset = Number(req.query.offset) || 0;
+
   const comments = await CommentRepository.find({ post: postId })
+    .sort('createdAt')
+    .limit(count)
+    .skip(offset)
     .populate('user', 'username')
     .populate('likeUsers', 'username')
-    .select('-__v')
-    .sort('createdAt');
+    .select('-__v');
 
   res.status(200).json({ status: 'success', data: { comments } });
 });

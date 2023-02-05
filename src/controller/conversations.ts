@@ -10,7 +10,13 @@ import { Document } from 'mongoose';
 
 class ConverationsController {
   getUserConversations = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
+    const count = Number(req.query.count) || 50;
+    const offset = Number(req.query.offset) || 0;
+
     const query = ConversationRepository.find({ $or: [{ user1: req.user._id }, { user2: req.user._id }] })
+      .sort('-lastMessage.createdAt')
+      .limit(count)
+      .skip(offset)
       .populate({
         path: 'lastMessage',
         select: 'text createdAt sender',
@@ -21,8 +27,7 @@ class ConverationsController {
       })
       .populate<{ user1: IUser }>('user1', 'username')
       .populate<{ user2: IUser }>('user2', 'username')
-      .select('-__v')
-      .sort('-lastMessage.createdAt');
+      .select('-__v');
 
     const userConversations = await query;
 

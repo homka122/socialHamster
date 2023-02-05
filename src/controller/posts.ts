@@ -1,8 +1,9 @@
 import { catchAsync } from '../utils/catchAsync';
 import PostRepository, { IPost } from '../models/post';
 import UserRepository, { IUser } from '../models/user';
-import mongoose from 'mongoose';
+import mongoose, { PipelineStage } from 'mongoose';
 import { NextFunction, Request, Response } from 'express';
+import { ApiError } from '../utils/ApiError';
 
 class PostsController {
   createPost = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
@@ -20,47 +21,31 @@ class PostsController {
 
   getAllPosts = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.query.userId;
-    const aggregate: any[] = [
-      {
-        $lookup: {
-          from: 'likes',
-          localField: '_id',
-          foreignField: 'post',
-          as: 'likes',
-        },
-      },
-      {
-        $lookup: {
-          from: 'comments',
-          localField: '_id',
-          foreignField: 'post',
-          as: 'comments',
-        },
-      },
+    const count = Number(req.query.count) || 20;
+    const offset = Number(req.query.offset) || 0;
+
+    if (count < 0 || offset < 0) {
+      return next(new ApiError('Bad request'));
+    }
+
+    const aggregate: PipelineStage[] = [
+      { $sort: { createdAt: -1 } },
+      { $limit: count },
+      { $skip: offset },
+      { $lookup: { from: 'likes', localField: '_id', foreignField: 'post', as: 'likes' } },
+      { $lookup: { from: 'comments', localField: '_id', foreignField: 'post', as: 'comments' } },
       {
         $addFields: {
-          likesCount: {
-            $size: '$likes',
-          },
-          commentsCount: {
-            $size: '$comments',
-          },
-          likeIDs: {
-            $map: {
-              input: '$likes',
-              as: 'likeObj',
-              in: '$$likeObj.user',
-            },
-          },
+          likesCount: { $size: '$likes' },
+          commentsCount: { $size: '$comments' },
+          likeIDs: { $map: { input: '$likes', as: 'likeObj', in: '$$likeObj.user' } },
         },
       },
       {
         $addFields: {
           isLiked: {
             $cond: {
-              if: {
-                $in: [req.user._id, '$likeIDs'],
-              },
+              if: { $in: [req.user._id, '$likeIDs'] },
               then: true,
               else: false,
             },
@@ -73,11 +58,6 @@ class PostsController {
           comments: 0,
           likeIDs: 0,
           __v: 0,
-        },
-      },
-      {
-        $sort: {
-          createdAt: -1,
         },
       },
     ];
