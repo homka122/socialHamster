@@ -64,6 +64,6 @@ JWT_REFRESH_SECRET=jh4g6j2hgu234hv6h2uehv23h4g
 sudo docker build -t social_hamster_back .
 
 Запуск в консоли: \
-sudo docker run -it --add-host=mongoservice:172.17.0.1 -p 5000:5000 social_hamster_back . \
+sudo docker run -it --add-host=mongoservice:172.17.0.1 -p 5000:5000 social_hamster_back \
 Запуск в фоне: \
-sudo docker run -d --add-host=mongoservice:172.17.0.1 -p 5000:5000 social_hamster_back .
+sudo docker run -d --add-host=mongoservice:172.17.0.1 -p 5000:5000 social_hamster_back
