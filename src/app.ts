@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ origin, credentials: true }));
 
-if (process.env.NODE_ENV) app.use('/api/static', express.static('src/public'));
+if (process.env.NODE_ENV) app.use('/api/static', express.static('public'));
 
 app.use('/api/auth', authRouter);
 app.use('/api/conversations', conversationsRouter);
