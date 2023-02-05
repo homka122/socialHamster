@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 export interface IUser {
   _id: mongoose.Types.ObjectId;
   username: string;
+  usernameLowerCase: string;
   password: string;
   role: 'ADMIN' | 'USER';
   profilePhoto?: string;
@@ -12,6 +13,10 @@ const userSchema = new mongoose.Schema<IUser>({
   username: {
     type: String,
     required: true,
+    unique: true,
+  },
+  usernameLowerCase: {
+    type: String,
     unique: true,
   },
   password: {

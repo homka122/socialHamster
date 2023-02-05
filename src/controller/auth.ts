@@ -23,21 +23,25 @@ class AuthController {
   signup = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { username, password } = req.body;
 
-    const user = await UserRepository.findOne({ username }).select('+password');
+    const user = await UserRepository.findOne({ usernameLowerCase: username.toLowerCase() }).select('+password');
 
     if (user) {
       return next(new ApiError('Пользователь с таким никнеймом уже существует', 400));
     }
 
     const hashedPassword = await authService.hashPassowrd(password);
-    const createdUser = await UserRepository.create({ username, password: hashedPassword });
+    const createdUser = await UserRepository.create({
+      username,
+      password: hashedPassword,
+      usernameLowerCase: username.toLowerCase(),
+    });
 
     this.sendAccessTokenAndSetRefreshToken(createdUser, res);
   });
 
   login = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { username, password } = req.body;
-    const user = await UserRepository.findOne({ username }).select('+password');
+    const user = await UserRepository.findOne({ usernameLowerCase: username.toLowerCase() }).select('+password');
 
     if (!user) {
       return next(new ApiError('Неверный никнейм или пароль!', 400));

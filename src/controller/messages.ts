@@ -54,7 +54,7 @@ class MessagesController {
   sendMessageToUser = catchAsync(async (req: Request, res: Response, next: NextFunction) => {
     const { text, username } = req.body;
 
-    const receiver = await UserRepository.findOne({ username });
+    const receiver = await UserRepository.findOne({ usernameLowerCase: username.toLowerCase() });
     if (!receiver) {
       return next(new ApiError('Пользователя с таким именем нет'));
     }
