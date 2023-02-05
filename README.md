@@ -48,24 +48,31 @@ Frontend: https://github.com/homka122/socialHamsterFrontend
 
 ### Открыть доступ к Mongod для Docker
 
-sudo vim /etc/mongod.conf (или любой другой редактор) \
+```bash
+sudo vim /etc/mongod.conf (или любой другой редактор)
+
  bindIp 127.0.0.1 -> bindIp: 127.0.0.1,172.17.0.1
+```
 
 Сохраняем - sudo service mongod restart
 
 ### Настройка .env:
 
-DB_URL=mongodb://mongoservice:27017/socialHamsterTest \
-PORT=5000 \
-JWT_ACCESS_SECRET=dskfj2093jkfdsj0394j1fj3hj3 \
-JWT_REFRESH_SECRET=jh4g6j2hgu234hv6h2uehv23h4g \
+```bash
+DB_URL=mongodb://mongoservice:27017/socialHamsterTest
+PORT=5000
+JWT_ACCESS_SECRET=dskfj2093jkfdsj0394j1fj3hj3
+JWT_REFRESH_SECRET=jh4g6j2hgu234hv6h2uehv23h4g
 NODE_ENV=development
+```
 
 ### Запуск контейнера:
 
+```bash
 sudo docker build -t social_hamster_back .
 
-Запуск в консоли: \
-sudo docker run -it --add-host=mongoservice:172.17.0.1 -p 5000:5000 social_hamster_back \
-Запуск в фоне: \
+Запуск в консоли:
+sudo docker run -it --add-host=mongoservice:172.17.0.1 -p 5000:5000 social_hamster_back
+Запуск в фоне:
 sudo docker run -d --add-host=mongoservice:172.17.0.1 -p 5000:5000 social_hamster_back
+```
