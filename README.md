@@ -25,6 +25,7 @@ Frontend: https://github.com/homka122/socialHamsterFrontend
 ## Технологии, которые я использовал при написании бекенда
 
 - Сервер: nginx (reverse-proxy, настройка статики)
+- Контейнеризация: Docker
 - Фреймворк: Express
 - База данных: MongoDB (mongoose). В том числе технология aggregation. <br>
 - Веб-Сокеты: ws. <br>
