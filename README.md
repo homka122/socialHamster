@@ -40,11 +40,30 @@ Frontend: https://github.com/homka122/socialHamsterFrontend
 - Роутинг: React-router-dom.
 - Веб-сокеты: ws.
 
-## Запуск backend
+## Пример запуска backend с помощью Docker
 
-Файл .env должен содержать поля "DB_URL","PORT","JWT_ACCESS_SECRET","JWT_REFRESH_SECRET" \
-DB_URL - ссылка к базе данных по протоколу mongodb \
-PORT - любой незанятый порт \
-JWT_ACCESS_SECRET \* JWT_REFRESH_SECRET - секретная строка для JWT \
+Сервис mongod должен быть запущен на локальной машине \
+Если база данных находиться на сервере - просто замените ссылку на ссылку для удаленного доступа
 
-npm start - запуск проекта.
+### Открыть доступ к Mongod для Docker
+
+sudo vim /etc/mongod.conf (или любой другой редактор) \
+ bindIp 127.0.0.1 -> bindIp: 127.0.0.1,172.17.0.1
+
+Сохраняем - sudo service mongod restart
+
+### Настройка .env:
+
+DB_URL=mongodb://mongoservice:27017/socialHamsterTest \
+PORT=5000 \
+JWT_ACCESS_SECRET=dskfj2093jkfdsj0394j1fj3hj3 \
+JWT_REFRESH_SECRET=jh4g6j2hgu234hv6h2uehv23h4g
+
+### Запуск контейнера:
+
+sudo docker build -t social_hamster_back .
+
+Запуск в консоли: \
+sudo docker run -it --add-host=mongoservice:172.17.0.1 -p 5000:5000 social_hamster_back . \
+Запуск в фоне: \
+sudo docker run -d --add-host=mongoservice:172.17.0.1 -p 5000:5000 social_hamster_back .

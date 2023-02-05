@@ -1,0 +1,6 @@
+node_modules
+.vscode
+requests
+tests
+src/public
+dist
