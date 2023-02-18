@@ -1,10 +1,7 @@
-import factoryRoutes from '../utils/factoryRoutes';
 import ConversationRepository, { IConversation } from '../models/conversation';
 import { catchAsync } from '../utils/catchAsync';
-import { websocketEmitter } from '../websocketApp';
 import { NextFunction, query, Request, Response } from 'express';
 import { ApiError } from '../utils/ApiError';
-import { IMessage } from '../models/message';
 import { IUser } from '../models/user';
 import { Document } from 'mongoose';
 
@@ -13,27 +10,77 @@ class ConverationsController {
     const count = Number(req.query.count) || 50;
     const offset = Number(req.query.offset) || 0;
 
-    const query = ConversationRepository.find({ $or: [{ user1: req.user._id }, { user2: req.user._id }] })
-      .sort('-lastMessage.createdAt')
-      .limit(count)
-      .skip(offset)
-      .populate({
-        path: 'lastMessage',
-        select: 'text createdAt sender',
-        populate: {
-          path: 'sender',
-          select: 'username',
+    const query = ConversationRepository.aggregate([
+      { $match: { $or: [{ user1: req.user._id }, { user2: req.user._id }] } },
+      { $limit: count },
+      { $skip: offset },
+      {
+        $lookup: {
+          from: 'messages',
+          localField: 'lastMessage',
+          foreignField: '_id',
+          as: 'lastMessage',
+          pipeline: [{ $project: { text: 1, createdAt: 1, sender: 1 } }],
         },
-      })
-      .populate<{ user1: IUser }>('user1', 'username')
-      .populate<{ user2: IUser }>('user2', 'username')
-      .select('-__v');
+      },
+      { $unwind: '$lastMessage' },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'lastMessage.sender',
+          foreignField: '_id',
+          as: 'lastMessage.sender',
+          pipeline: [{ $project: { username: 1 } }],
+        },
+      },
+      { $unwind: '$lastMessage.sender' },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user1',
+          foreignField: '_id',
+          as: 'user1',
+          pipeline: [{ $project: { username: 1 } }],
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user2',
+          foreignField: '_id',
+          as: 'user2',
+          pipeline: [{ $project: { username: 1 } }],
+        },
+      },
+      { $unwind: '$user1' },
+      { $unwind: '$user2' },
+      { $project: { __v: 0 } },
+      { $sort: { 'lastMessage.createdAt': -1 } },
+    ]);
+
+    // const query = ConversationRepository.find({ $or: [{ user1: req.user._id }, { user2: req.user._id }] })
+    //   .limit(count)
+    //   .skip(offset)
+    //   .populate({
+    //     path: 'lastMessage',
+    //     select: 'text createdAt sender',
+    //     populate: {
+    //       path: 'sender',
+    //       select: 'username',
+    //     },
+    //     options: {
+    //       sort: { createdAt: -1 },
+    //     },
+    //   })
+    //   .populate<{ user1: IUser }>('user1', 'username')
+    //   .populate<{ user2: IUser }>('user2', 'username')
+    //   .select('-__v');
 
     const userConversations = await query;
 
     // Define "peer" field
     const formatedUserConversations = userConversations.map((conversation) => {
-      let conversationForSend: any = { ...conversation.toObject() };
+      let conversationForSend: any = { ...conversation };
 
       if (conversation.user1.username === req.user.username) {
         conversationForSend.peer = conversation.user2;
